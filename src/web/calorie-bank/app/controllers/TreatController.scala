@@ -7,7 +7,7 @@ import play.api.libs.json._
 // Our custom things
 import models.Treat
 
-object TreatController extends Controller {
+object TreatController extends Controller with securesocial.core.SecureSocial {
 
 	var seeded = false;
 
@@ -25,7 +25,7 @@ object TreatController extends Controller {
   	seeded = true;
   }
 
-  def getPossibleTreats(calorieCap : Long) = Action {
+  def getPossibleTreats(calorieCap : Long) = SecuredAction {
   	if (!seeded) seed() 
   	Ok("" + Treat.findByTreatName("cookie").head.calories)
 
@@ -39,5 +39,12 @@ object TreatController extends Controller {
 	//   ]""")
 	// Ok(Json.stringify(json))
   }
+
+  // you don't want to redirect to the login page for ajax calls so
+  // adding a ajaxCall = true will make SecureSocial return a forbidden error
+  // instead.
+  // def ajaxCall = SecuredAction(ajaxCall = true) { implicit request =>
+  //   // return some json
+  // }   
 
 }
