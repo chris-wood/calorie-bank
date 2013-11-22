@@ -1,1 +1,1 @@
-web:    play run --http.port=$PORT $PLAY_OPTS
+web: target/start -Dhttp.port=${PORT} -Dplay.version=2.2.1 -DapplyEvolutions.default=true 
