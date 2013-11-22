@@ -157,7 +157,7 @@ function TreatController($scope, $http){
     alert("fetching data!");
     $http({method: 'GET', url: '/treats/0'}).
       success(function(data, status, headers, config) {
-        alert(data);
+        $scope.treats[0] = data;
       }).
       error(function(data, status, headers, config) {
        console.log("ERROR: unable to fetch treat information for this particular user.");
