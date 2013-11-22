@@ -1,8 +1,8 @@
 package controllers
 
-import play.api._
 import play.api.mvc._
 import play.api.libs.json._
+import securesocial.core.{Identity, Authorization}
 
 // Our custom things
 import models.Treat
@@ -11,9 +11,9 @@ object TreatController extends Controller with securesocial.core.SecureSocial {
 
 	var seeded = false;
 
-  def index = Action {
-    Ok(views.html.index("Your new application is ready."))
-  }
+  // def index = Action { implicit request =>
+  //   Ok(views.html.index(request.user))
+  // }
 
   def seed() {
   	val t1 = new Treat("cookie", 200)
@@ -48,3 +48,10 @@ object TreatController extends Controller with securesocial.core.SecureSocial {
   // }   
 
 }
+
+// An Authorization implementation that only authorizes uses that logged in using twitter
+// case class WithProvider(provider: String) extends Authorization {
+//   def isAuthorized(user: Identity) = {
+//     user.identityId.providerId == provider
+//   }
+// }
