@@ -140,33 +140,32 @@ function CalorieBankController($scope){
   }
 }
 
-function FoodController($scope){
+function TreatController($scope, $http){
 
   // $scope is a special object that makes
   // its properties available to the view as
   // variables. Here we set some default values:
 
-  $scope.showtooltip = false;
-  $scope.value = 'Edit me.';
+  // Dummy data to start...
+  $scope.treats = new Array();
+  $scope.treats[0] = "NOTHING!";
 
   // Some helper functions that will be
   // available in the angular declarations
 
-  $scope.hideTooltip = function(){
-
-    // When a model is changed, the view will be automatically
-    // updated by by AngularJS. In this case it will hide the tooltip.
-
-    $scope.showtooltip = false;
-  }
-
-  $scope.toggleTooltip = function(e){
-    e.stopPropagation();
-    $scope.showtooltip = !$scope.showtooltip;
+  $scope.getTreats = function() {
+    alert("fetching data!");
+    $http({method: 'GET', url: '/treats/0'}).
+      success(function(data, status, headers, config) {
+        alert(data);
+      }).
+      error(function(data, status, headers, config) {
+       console.log("ERROR: unable to fetch treat information for this particular user.");
+      });
   }
 }
 
-function MapController($scope){
+function MapController($scope, $http){
 
   // $scope is a special object that makes
   // its properties available to the view as

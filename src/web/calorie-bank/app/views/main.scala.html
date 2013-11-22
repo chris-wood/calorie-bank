@@ -267,19 +267,27 @@ d3.tsv("@routes.Assets.at("data.tsv")", function(error, data) {
 			<div class="jumbotron">
 				<h1 style="text-align:center;">Pick your treat!</h1>
 				<h1 style="text-align:center;">PICTURE</h1>
-				<div id="main" ng-app ng-controller="FoodController" ng-click="hideTooltip()">
+				<div id="main" ng-app ng-controller="TreatController" ng-click="hideTooltip()">
 					<!-- This is the tooltip. It is shown only when the showtooltip variable is truthful -->
-					<div class="tooltip" ng-click="$event.stopPropagation()" ng-show="showtooltip">
+					<button type="button" class="btn btn-default" ng-click="getTreats()">Default</button>
 
-						<!-- ng-model binds the contents of the text field with the "value" model.
+					<ul>
+						<li ng-repeat="treat in treats">
+							{{treat}}
+						</li>
+					</ul>
+
+					<!-- <div class="tooltip" ng-click="$event.stopPropagation()" ng-show="showtooltip">
+
+						ng-model binds the contents of the text field with the "value" model.
 						 Any changes to the text field will automatically update the value, and
-						 all other bindings on the page that depend on it.  -->
+						 all other bindings on the page that depend on it. 
 						<input type="text" ng-model="value" />
 					</div>
 
 					<!-- Call a method defined in the InlineEditorController that toggles
 					 the showtooltip variable -->
-					<p ng-click="toggleTooltip($event)">{{value}}</p>
+					<!-- <p ng-click="toggleTooltip($event)">{{value}}</p> --> -->
 
 				</div>
 			</div>
@@ -300,6 +308,7 @@ d3.tsv("@routes.Assets.at("data.tsv")", function(error, data) {
 					 the showtooltip variable -->
 					<p ng-click="toggleTooltip($event)">{{value}}</p>
 
+					<!-- 
 					<div id="panel">
 						<input onclick="clearMarkers();" type=button value="Hide Markers">
 						<input onclick="showMarkers();" type=button value="Show All Markers">
@@ -338,9 +347,10 @@ d3.tsv("@routes.Assets.at("data.tsv")", function(error, data) {
 						<option value="los angeles, ca">Los Angeles</option>
 						</select>
 					</div>
+					-->
 
 					<!-- the map -->
-					<div id="map-canvas"/>
+					<!-- <div id="map-canvas"/>  -->
 
 				</div>
 			</div>
