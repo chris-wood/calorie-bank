@@ -6,7 +6,7 @@ import play.api.Play.current
 import anorm._
 import anorm.SqlParser._
 
-case class Treat(name: String, calories: Int)
+case class Treat(name: String, calories: Int, img_id: Int)
 
 object Treat {
 
@@ -15,8 +15,9 @@ object Treat {
    */
   val simple = {
   	get[String]("treat.name") ~
-  	get[Int]("treat.calories") map {
-  		case name ~ calories => Treat(name, calories)
+  	get[Int]("treat.calories") ~
+    get[Int]("treat.img_id") map {
+  		case name ~ calories ~ img_id => Treat(name, calories, img_id)
   	}
 
     // get[Pk[Int]]("employee.employee_id") ~
@@ -42,12 +43,13 @@ object Treat {
     DB.withConnection { implicit connection =>
       SQL(
         """
-          insert into TREAT(NAME,CALORIES) values (
-            {name}, {calories}
+          insert into treat(name,calories,img_id) values (
+            {name}, {calories}, {img_id}
           )
         """).on(
           'name -> treat.name,
-          'calories -> treat.calories).executeUpdate()
+          'calories -> treat.calories,
+          'img_id -> treat.img_id).executeUpdate()
     }
   }
 

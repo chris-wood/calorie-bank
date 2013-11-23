@@ -2,12 +2,12 @@ package controllers
 
 import play.api.mvc._
 import play.api.libs.json._
-import securesocial.core.{Identity, Authorization}
+// import securesocial.core.{Identity, Authorization}
 
 // Our custom things
 import models.Treat
 
-object TreatController extends Controller with securesocial.core.SecureSocial {
+object TreatController extends Controller { // with securesocial.core.SecureSocial {
 
 	var seeded = false;
 
@@ -16,18 +16,20 @@ object TreatController extends Controller with securesocial.core.SecureSocial {
   // }
 
   def seed() {
-  	val t1 = new Treat("cookie", 200)
+  	val t1 = new Treat("cookie", 200, 1)
   	Treat.insert(t1)
-  	val t2 = new Treat("brownie", 400)
+  	val t2 = new Treat("brownie", 400, 2)
   	Treat.insert(t2)
-  	val t3 = new Treat("latte", 150)
+  	val t3 = new Treat("latte", 150, 3)
   	Treat.insert(t3)
   	seeded = true;
   }
 
-  def getPossibleTreats(calorieCap : Long) = SecuredAction {
+  def getPossibleTreats(calorieCap : String) = Action { //SecuredAction {
   	if (!seeded) seed() 
   	Ok("" + Treat.findByTreatName("cookie").head.calories)
+
+    // TODO: in reality, we need to fetch this user's remaining calories, build a query that returns all treats below that limit, and then return a list of the treat objects jsonified
 
  	//  	val json: JsValue = Json.parse("""
 	// {

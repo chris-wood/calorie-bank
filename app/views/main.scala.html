@@ -1,357 +1,147 @@
-@(title: String)(content: Html)
+@(title: String, username:String)(content: Html)
 
 <!DOCTYPE html>
 
-<html ng-app>
-    <head>
-        <title>@title</title>
-        <link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/main.css")">
-        <link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/bootstrap.min.css")">
-        <link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/carousel.css")">
-        <link rel="shortcut icon" type="image/png" href="@routes.Assets.at("images/favicon.png")">
+<html ng-app="calorie-bank">
+<head>
+    <title>@title</title>
+    <link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/main.css")">
+    <link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/bootstrap.min.css")">
+    <link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/carousel.css")">
+    <link rel="shortcut icon" type="image/png" href="@routes.Assets.at("images/favicon.png")">
 
-        <script type="text/javascript" src="@routes.Assets.at("javascripts/d3.v3.min.js")"></script> 
-        <script type="text/javascript" src="@routes.Assets.at("javascripts/angular.min.js")"></script> 
-        <script type="text/javascript" src="@routes.Assets.at("javascripts/gauge.js")"></script> 
-        <script type="text/javascript" src="@routes.Assets.at("javascripts/calorie.js")"></script> 
+	<!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+	<!--[if lt IE 9]>
+		<script src="js/html5shiv.js"></script>
+	<![endif]-->
 
-        <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
-		<style type="text/css">
-		  html { height: 100% }
-		  body { height: 100%; margin: 10px; padding: 10px }
-		  #map-canvas { height: 100% }
-		  #panel {
-	        position: relative;
-	        top: 5px;
-	        left: 50%;
-	        margin-left: -180px;
-	        z-index: 5;
-	        background-color: #fff;
-	        padding: 5px;
-	        border: 1px solid #999;
-	      }
-		</style>
-		<script type="text/javascript"
-		  src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBAi-lt4ht-4058cP1fjn0WcNeH6ofQ3Vs&sensor=false">
-		</script>
-		<script type="text/javascript">
-		  function initialize() {
-		    var mapOptions = {
-		      center: new google.maps.LatLng(-34.397, 150.644),
-		      zoom: 8,
-		      mapTypeId: google.maps.MapTypeId.ROADMAP
-		    };
-		    var map = new google.maps.Map(document.getElementById("map-canvas"),
-		        mapOptions);
-		  }
-		  google.maps.event.addDomListener(window, 'load', initialize);
-		</script>
+    <script type="text/javascript" src="@routes.Assets.at("javascripts/d3.v3.min.js")"></script> 
+    <script type="text/javascript" src="@routes.Assets.at("javascripts/angular.min.js")"></script> 
+    <script type="text/javascript" src="@routes.Assets.at("javascripts/gauge.js")"></script> 
+    <script type="text/javascript" src="@routes.Assets.at("javascripts/calorie.js")"></script> 
 
-        <style>
-
-		body {
-		font: 10px sans-serif;
-		}
-
-		.axis path,
-		.axis line {
-		fill: none;
-		stroke: #000;
-		shape-rendering: crispEdges;
-		}
-
-		.x.axis path {
-		display: none;
-		}
-
-		.line {
-		fill: none;
-		stroke: steelblue;
-		stroke-width: 1.5px;
-		}
-
-		</style>
-
-        <script>				
-			var gauges = [];
-			
-			function createGauge(name, label, min, max)
+    <script>				
+		var gauges = [];
+		
+		function createGauge(name, label, min, max)
+		{
+			var config = 
 			{
-				var config = 
-				{
-					size: 120,
-					label: label,
-					min: undefined != min ? min : 0,
-					max: undefined != max ? max : 100,
-					minorTicks: 5
-				}
-				
-				var range = config.max - config.min;
-				config.yellowZones = [{ from: config.min + range*0.75, to: config.min + range*0.9 }];
-				config.redZones = [{ from: config.min + range*0.9, to: config.max }];
-				
-				gauges[name] = new Gauge(name + "GaugeContainer", config);
-				gauges[name].render();
+				size: 120,
+				label: label,
+				min: undefined != min ? min : 0,
+				max: undefined != max ? max : 100,
+				minorTicks: 5
 			}
 			
-			function createGauges()
-			{
-				createGauge("memory", "Memory");
-				createGauge("cpu", "CPU");
-				createGauge("network", "Network");
-				//createGauge("test", "Test", -50, 50 );
-			}
+			var range = config.max - config.min;
+			config.yellowZones = [{ from: config.min + range*0.75, to: config.min + range*0.9 }];
+			config.redZones = [{ from: config.min + range*0.9, to: config.max }];
 			
-			function updateGauges()
+			gauges[name] = new Gauge(name + "GaugeContainer", config);
+			gauges[name].render();
+		}
+		
+		function createGauges()
+		{
+			createGauge("memory", "Memory");
+			createGauge("cpu", "CPU");
+			createGauge("network", "Network");
+			//createGauge("test", "Test", -50, 50 );
+		}
+		
+		function updateGauges()
+		{
+			for (var key in gauges)
 			{
-				for (var key in gauges)
-				{
-					var value = getRandomValue(gauges[key])
-					gauges[key].redraw(value);
-				}
+				var value = getRandomValue(gauges[key])
+				gauges[key].redraw(value);
 			}
-			
-			function getRandomValue(gauge)
-			{
-				var overflow = 0; //10;
-				return gauge.config.min - overflow + (gauge.config.max - gauge.config.min + overflow*2) *  Math.random();
-			}
+		}
+		
+		function getRandomValue(gauge)
+		{
+			var overflow = 0; //10;
+			return gauge.config.min - overflow + (gauge.config.max - gauge.config.min + overflow*2) *  Math.random();
+		}
 
-			function initialize()
-			{
-				// alert("loading gauge!");
-				createGauges();
-				setInterval(updateGauges, 5000);
-			}
+		function initialize()
+		{
+			// alert("loading gauge!");
+			createGauges();
+			setInterval(updateGauges, 5000);
+		}
+	</script>
 
-			// D3 plot shenanigans
+</head>
 
-			var margin = {top: 20, right: 80, bottom: 30, left: 50},
-    width = 960 - margin.left - margin.right,
-    height = 500 - margin.top - margin.bottom;
-
-var parseDate = d3.time.format("%Y%m%d").parse;
-
-var x = d3.time.scale()
-    .range([0, width]);
-
-var y = d3.scale.linear()
-    .range([height, 0]);
-
-var color = d3.scale.category10();
-
-var xAxis = d3.svg.axis()
-    .scale(x)
-    .orient("bottom");
-
-var yAxis = d3.svg.axis()
-    .scale(y)
-    .orient("left");
-
-var line = d3.svg.line()
-    .interpolate("basis")
-    .x(function(d) { return x(d.date); })
-    .y(function(d) { return y(d.temperature); });
-
-var svg = d3.select("body").append("svg")
-    .attr("width", width + margin.left + margin.right)
-    .attr("height", height + margin.top + margin.bottom)
-  .append("g")
-    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
-d3.tsv("@routes.Assets.at("data.tsv")", function(error, data) {
-	console.log(data);
-  color.domain(d3.keys(data[0]).filter(function(key) { return key !== "date"; }));
-
-  data.forEach(function(d) {
-    d.date = parseDate(d.date);
-  });
-
-  var cities = color.domain().map(function(name) {
-    return {
-      name: name,
-      values: data.map(function(d) {
-        return {date: d.date, temperature: +d[name]};
-      })
-    };
-  });
-
-  x.domain(d3.extent(data, function(d) { return d.date; }));
-
-  y.domain([
-    d3.min(cities, function(c) { return d3.min(c.values, function(v) { return v.temperature; }); }),
-    d3.max(cities, function(c) { return d3.max(c.values, function(v) { return v.temperature; }); })
-  ]);
-
-  svg.append("g")
-      .attr("class", "x axis")
-      .attr("transform", "translate(0," + height + ")")
-      .call(xAxis);
-
-  svg.append("g")
-      .attr("class", "y axis")
-      .call(yAxis)
-    .append("text")
-      .attr("transform", "rotate(-90)")
-      .attr("y", 6)
-      .attr("dy", ".71em")
-      .style("text-anchor", "end")
-      .text("Temperature (ºF)");
-
-  var city = svg.selectAll(".city")
-      .data(cities)
-    .enter().append("g")
-      .attr("class", "city");
-
-  city.append("path")
-      .attr("class", "line")
-      .attr("d", function(d) { return line(d.values); })
-      .style("stroke", function(d) { return color(d.name); });
-
-  city.append("text")
-      .datum(function(d) { return {name: d.name, value: d.values[d.values.length - 1]}; })
-      .attr("transform", function(d) { return "translate(" + x(d.value.date) + "," + y(d.value.temperature) + ")"; })
-      .attr("x", 3)
-      .attr("dy", ".35em")
-      .text(function(d) { return d.name; });
-});
-		</script>
-
-    </head>
-
-    <body onload="initialize()">
-
-    	<div class="container">
-			<div class="row">
-				<div class="col-md-6"> <!-- left -->
-					<div id="main" ng-app ng-controller="CalorieBankController" ng-click="hideTooltip()">
-						<!-- This is the tooltip. It is shown only when the showtooltip variable is truthful -->
-						<div class="tooltip" ng-click="$event.stopPropagation()" ng-show="showtooltip">
-
-							<!-- ng-model binds the contents of the text field with the "value" model.
-							 Any changes to the text field will automatically update the value, and
-							 all other bindings on the page that depend on it.  -->
-							<input type="text" ng-model="value" />
-						</div>
-
-						<span id="networkGaugeContainer"></span>
-
-						<!-- Call a method defined in the InlineEditorController that toggles
-						 the showtooltip variable -->
-						<p ng-click="toggleTooltip($event)">{{value}}</p>
-					</div>
-				</div>
-				<div class="col-md-6"> <!-- right -->
-					<div id="main" ng-app ng-controller="GraphController" ng-click="hideTooltip()">
-						<!-- This is the tooltip. It is shown only when the showtooltip variable is truthful -->
-						<div class="tooltip" ng-click="$event.stopPropagation()" ng-show="showtooltip">
-
-							<!-- ng-model binds the contents of the text field with the "value" model.
-							 Any changes to the text field will automatically update the value, and
-							 all other bindings on the page that depend on it.  -->
-							<input type="text" ng-model="value" />
-						</div>
-
-						<!-- Call a method defined in the InlineEditorController that toggles
-						 the showtooltip variable -->
-						<p ng-click="toggleTooltip($event)">{{value}}</p>
-
-					</div>
-				</div>	
+<body onload="initialize()">
+<div class="container">
+	<div class="row clearfix">
+		<div class="col-md-12 column">
+			<div class="page-header">
+				<h1>
+					Calorie Bank <small>Cash in on treats!</small>
+				</h1>
 			</div>
 
-			<!-- stats/directive break -->
-			</hr>
+			<!-- top panel well -->
+			<div class="well">
+				<div class="row clearfix">
+					<div class="col-md-6 column">
+						<div id="main" class="text-center" ng-app ng-controller="CalorieBankController" ng-click="hideTooltip()">
+							<span id="networkGaugeContainer"></span>
+						</div>
+					</div>
+					<div class="col-md-6 column text-center">
+						<img alt="140x140" src="http://lorempixel.com/140/140/">
+					</div>
+				</div>
+			</div>
 
-			<!-- TODO: integrate angular and use it to control the markup here -->
-			<div class="jumbotron">
-				<h1 style="text-align:center;">Pick your treat!</h1>
-				<h1 style="text-align:center;">PICTURE</h1>
-				<div id="main" ng-app ng-controller="TreatController" ng-click="hideTooltip()">
-					<!-- This is the tooltip. It is shown only when the showtooltip variable is truthful -->
+			<!-- treat well -->
+			<div class="well">
+				<div id="main" ng-app="calorie-bank" ng-controller="TreatController">
+					<h1 style="text-align:center;">{{message}}</h1>
 					<button type="button" class="btn btn-default" ng-click="getTreats()">Default</button>
 
-					<ul>
-						<li ng-repeat="treat in treats">
-							{{treat}}
-						</li>
-					</ul>
+					</br>
 
-					<!-- <div class="tooltip" ng-click="$event.stopPropagation()" ng-show="showtooltip">
-
-						ng-model binds the contents of the text field with the "value" model.
-						 Any changes to the text field will automatically update the value, and
-						 all other bindings on the page that depend on it. 
-						<input type="text" ng-model="value" />
+					<div class="row clearfix">
+						<div class="col-md-6 column">
+							<div class="list-group">
+								<div class="list-group-item">
+									Treats
+								</div>
+								<div class="list-group-item"><span class="badge">{{treats.length}}</span>
+									<h4 class="list-group-item-heading">
+										Pastries
+									</h4>
+									<ul>
+										<li ng-repeat="treat in treats">
+											{{treat}}
+										</li>
+									</ul>
+								</div>
+							</div>
+						</div>
+						<div class="col-md-6 column text-center">
+							<img src="http://placehold.it/350x150">
+						</div>
 					</div>
-
-					<!-- Call a method defined in the InlineEditorController that toggles
-					 the showtooltip variable -->
-					<!-- <p ng-click="toggleTooltip($event)">{{value}}</p> --> -->
-
 				</div>
 			</div>
+			</hr>
 
-			<div class="jumbotron">
+			<!-- location well -->
+			<div class="well">
 				<h1 style="text-align:center;">Get it from here!</h1>
 				<div id="main" ng-app ng-controller="MapController" ng-click="hideTooltip()">
-					<!-- This is the tooltip. It is shown only when the showtooltip variable is truthful -->
 					<div class="tooltip" ng-click="$event.stopPropagation()" ng-show="showtooltip">
 
-						<!-- ng-model binds the contents of the text field with the "value" model.
-						 Any changes to the text field will automatically update the value, and
-						 all other bindings on the page that depend on it.  -->
-						<input type="text" ng-model="value" />
+						<!-- map goes here -->
+						<img src="http://placehold.it/350x150">
 					</div>
-
-					<!-- Call a method defined in the InlineEditorController that toggles
-					 the showtooltip variable -->
-					<p ng-click="toggleTooltip($event)">{{value}}</p>
-
-					<!-- 
-					<div id="panel">
-						<input onclick="clearMarkers();" type=button value="Hide Markers">
-						<input onclick="showMarkers();" type=button value="Show All Markers">
-						<input onclick="deleteMarkers();" type=button value="Delete Markers">
-
-						<br/>
-
-						<b>Start: </b>
-						<select id="start" onchange="calcRoute();">
-						<option value="chicago, il">Chicago</option>
-						<option value="st louis, mo">St Louis</option>
-						<option value="joplin, mo">Joplin, MO</option>
-						<option value="oklahoma city, ok">Oklahoma City</option>
-						<option value="amarillo, tx">Amarillo</option>
-						<option value="gallup, nm">Gallup, NM</option>
-						<option value="flagstaff, az">Flagstaff, AZ</option>
-						<option value="winona, az">Winona</option>
-						<option value="kingman, az">Kingman</option>
-						<option value="barstow, ca">Barstow</option>
-						<option value="san bernardino, ca">San Bernardino</option>
-						<option value="los angeles, ca">Los Angeles</option>
-						</select>
-						<b>End: </b>
-						<select id="end" onchange="calcRoute();">
-						<option value="chicago, il">Chicago</option>
-						<option value="st louis, mo">St Louis</option>
-						<option value="joplin, mo">Joplin, MO</option>
-						<option value="oklahoma city, ok">Oklahoma City</option>
-						<option value="amarillo, tx">Amarillo</option>
-						<option value="gallup, nm">Gallup, NM</option>
-						<option value="flagstaff, az">Flagstaff, AZ</option>
-						<option value="winona, az">Winona</option>
-						<option value="kingman, az">Kingman</option>
-						<option value="barstow, ca">Barstow</option>
-						<option value="san bernardino, ca">San Bernardino</option>
-						<option value="los angeles, ca">Los Angeles</option>
-						</select>
-					</div>
-					-->
-
-					<!-- the map -->
-					<!-- <div id="map-canvas"/>  -->
-
 				</div>
 			</div>
 
@@ -359,9 +149,13 @@ d3.tsv("@routes.Assets.at("data.tsv")", function(error, data) {
 			<footer style="text-align:center;">
 				<p>&copy; Calorie Bank by <a target="_blank" href="http://www.christopher-wood.com">Christopher Wood</a></p>
 			</footer>
-		</div>
 
-	    <script src="@routes.Assets.at("javascripts/jquery-1.9.0.min.js")" type="text/javascript"></script>
-    	<script src="@routes.Assets.at("javascripts/bootstrap.min.js")" type="text/javascript"></script>
-    </body>
+		</div>
+	</div>
+</div>
+</body>
+
+<script src="@routes.Assets.at("javascripts/jquery-1.9.0.min.js")" type="text/javascript"></script>
+<script src="@routes.Assets.at("javascripts/bootstrap.min.js")" type="text/javascript"></script>
+
 </html>
