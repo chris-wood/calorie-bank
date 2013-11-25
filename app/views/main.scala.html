@@ -20,14 +20,14 @@
     <script type="text/javascript" src="@routes.Assets.at("javascripts/gauge.js")"></script> 
     <script type="text/javascript" src="@routes.Assets.at("javascripts/calorie.js")"></script> 
 
-    <script>				
+    <!--<script>				
 		var gauges = [];
 		
 		function createGauge(name, label, min, max)
 		{
 			var config = 
 			{
-				size: 120,
+				size: 400,
 				label: label,
 				min: undefined != min ? min : 0,
 				max: undefined != max ? max : 100,
@@ -44,10 +44,7 @@
 		
 		function createGauges()
 		{
-			createGauge("memory", "Memory");
-			createGauge("cpu", "CPU");
-			createGauge("network", "Network");
-			//createGauge("test", "Test", -50, 50 );
+			createGauge("calorie", "Calories");
 		}
 		
 		function updateGauges()
@@ -67,16 +64,17 @@
 
 		function initialize()
 		{
-			// alert("loading gauge!");
 			createGauges();
 			setInterval(updateGauges, 5000);
 		}
-	</script>
+	</script>-->
 
 </head>
 
-<body onload="initialize()">
-<div class="container">
+<body ng-app="calorie-bank" ng-controller="MainController">
+<button ng-click="updateTheme()">Change the theme!</button>
+
+<div class="container" ng-style="{'background-color': getTheme()}">
 	<div class="row clearfix">
 		<div class="col-md-12 column">
 			<div class="page-header">
@@ -89,12 +87,15 @@
 			<div class="well">
 				<div class="row clearfix">
 					<div class="col-md-6 column">
-						<div id="main" class="text-center" ng-app ng-controller="CalorieBankController" ng-click="hideTooltip()">
-							<span id="networkGaugeContainer"></span>
+						<div id="main" class="text-center" ng-app="calorie-bank" ng-controller="CalorieBankController" data-ng-init="initialize()">
+							<span id="GaugeContainer"></span>
 						</div>
 					</div>
 					<div class="col-md-6 column text-center">
-						<img alt="140x140" src="http://lorempixel.com/140/140/">
+
+						<!-- graph of calories/exercise goes here -->
+
+						<!-- <img alt="140x140" src="http://lorempixel.com/140/140/"> -->
 					</div>
 				</div>
 			</div>
@@ -110,18 +111,13 @@
 					<div class="row clearfix">
 						<div class="col-md-6 column">
 							<div class="list-group">
-								<div class="list-group-item">
-									Treats
-								</div>
-								<div class="list-group-item"><span class="badge">{{treats.length}}</span>
+								<div ng-repeat="treatGroup in treatGroupCollection" class="list-group-item panel-heading"><span class="pull-left badge">{{treatGroup.treats.length}}</span>
 									<h4 class="list-group-item-heading">
-										Pastries
+										{{treatGroup.groupName}}
 									</h4>
-									<ul>
-										<li ng-repeat="treat in treats">
-											{{treat}}
-										</li>
-									</ul>
+									<div ng-repeat="treat in treatGroup.treats" class="list-group-item data-collapse" ng-click="renderTreat(treat)">
+										{{treat.name}} - {{treat.calories}}
+									</div>
 								</div>
 							</div>
 						</div>

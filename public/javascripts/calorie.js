@@ -1,3 +1,52 @@
+///////////////////////////////////
+/////// Application-wide classes
+///////////////////////////////////
+
+/**
+ * A collection for a group of treats.
+ */
+function TreatGroup(groupName, treats) 
+{
+  this.groupName = groupName;
+  this.treats = treats; // array of Treat objects
+}
+
+/**
+ * A specific type of treat.
+ */
+function Treat(name, calories, location) 
+{
+  this.name = name;
+  this.calories = calories;
+  this.location = location;
+}
+
+/**
+ * A location that specifies where treats (or their ingredients) can be found.
+ */
+function TreatLocation(name, address, url, latitude, longitude) 
+{
+  this.name = name;
+  this.address = address;
+  this.url = url;
+  this.latitude = latitude;
+  this.longitude = longitude;
+}
+
+/**
+ * A class that encapsulates the parameters for the calorie gauge. This object is created
+ * in response to some set of config. params sent from the server on page load.
+ */
+function CalorieGaugeConfig(min, max, target)
+{
+  this.min = min;
+  this.max = max;
+  this.target = target;
+}
+
+///////////////////////////////////
+////// Angular scaffolding
+///////////////////////////////////
 // Create the calorie-bank app
 var app = angular.module('calorie-bank', []);
 
@@ -31,104 +80,122 @@ app.factory('$calorie', function ($http, $log) {
   };
 });
 
-app.controller('TreatController', ['$scope', '$calorie', '$log', function ($scope, $calorie, $log) {
-  // $scope is a special object that makes
-  // its properties available to the view as
-  // variables. Here we set some default values:
+app.controller('MainController', ['$scope', '$calorie', '$log', function ($scope, $calorie, $log) {
 
-  // Dummy data to start...
-  $scope.treats = new Array();
+  $scope.colors = new Array();
+  // var white = '#' + 0x000;
+  // var black = '#' + 0xFFF;
+  $scope.colors[0] = "black";
+  $scope.colors[1] = "white";
+  var colorIndex = 0;
+
+  // TODO
+  $scope.updateTheme = function() {
+    colorIndex = (colorIndex + 1) % 2;
+    alert("Updating theme to: " + $scope.colors[colorIndex]);
+  }
+
+  $scope.getTheme = function() {
+    return $scope.colors[$scope.colorIndex];
+  }
+}]);
+
+app.controller('TreatController', ['$scope', '$calorie', '$log', function ($scope, $calorie, $log) {
+  // Default objects in scope for this controller
+  $scope.treatGroupCollection = new Array(); // this is an array of arrays
   $scope.message = "YOU GET NOTHING!";
 
-  // Some helper functions that will be
-  // available in the angular declarations
+  /////// BEGIN TEST DATA
+  $scope.treatGroupCollection = new Array();
+  var t1 = new Treat("cookie", 200, null);
+  var t2 = new Treat("brownie", 300, null);
+  var t3 = new Treat("donut", 500, null);
+  var tarray = new Array();
+  tarray[0] = t1;
+  tarray[1] = t2;
+  tarray[2] = t3;
+  $scope.treatGroupCollection[0] = new TreatGroup("Pastries", tarray);
 
+  var f1 = new Treat("fries", 500, null);
+  var f2 = new Treat("burger", 600, null);
+  var farray = new Array();
+  farray[0] = f1;
+  farray[1] = f2;
+  $scope.treatGroupCollection[1] = new TreatGroup("Fried Foods", farray);
+  /////// END TEST DATA
+
+  // TODO
   $scope.getTreats = function() {
     alert("fetching data!");
     $scope.treats = $calorie.getTreats("TODO");
     alert($scope.treats);
   } 
+
+  // TODO
+  $scope.renderTreat = function(treat) {
+    alert("showing treat: " + treat.name);
+    // TODO: render new image here? and update location controller with the treat's nearest location
+  }
 }]);
 
 function GraphController($scope){
-
-  // $scope is a special object that makes
-  // its properties available to the view as
-  // variables. Here we set some default values:
-
-  $scope.showtooltip = false;
-  $scope.value = 'Edit me.';
-
-  // Some helper functions that will be
-  // available in the angular declarations
-
-  $scope.hideTooltip = function(){
-
-    // When a model is changed, the view will be automatically
-    // updated by by AngularJS. In this case it will hide the tooltip.
-
-    $scope.showtooltip = false;
-  }
-
-  $scope.toggleTooltip = function(e){
-    e.stopPropagation();
-    $scope.showtooltip = !$scope.showtooltip;
-  }
+  // TODO
 }
 
-function CalorieBankController($scope){
-
-  // $scope is a special object that makes
-  // its properties available to the view as
-  // variables. Here we set some default values:
-
-  $scope.showtooltip = false;
-  $scope.value = 'Edit me.';
-
-  // Some helper functions that will be
-  // available in the angular declarations
-
-  $scope.hideTooltip = function(){
-
-    // When a model is changed, the view will be automatically
-    // updated by by AngularJS. In this case it will hide the tooltip.
-
-    $scope.showtooltip = false;
-  }
-
-  $scope.toggleTooltip = function(e){
-    e.stopPropagation();
-    $scope.showtooltip = !$scope.showtooltip;
-  }
-}
-
-// function TreatController($scope, $http){
-
+app.controller('CalorieBankController', ['$scope', '$calorie', '$log', function ($scope, $calorie, $log) {
+  var gauges = [];
   
-// }
+  $scope.createGauge = function()
+  {
+
+    // TODO: pull configuration down from the backend through HTTP call
+    // is a calorie configuration object warranted? backend can just build object when queried...
+
+    var config = 
+    {
+      size: 400,
+      label: "Calories",
+      min: 0,
+      max: 2400,
+      target: 1800,
+      minorTicks: 5
+    }
+    
+    var range = config.max - config.min;
+    config.yellowZones = [{ from: config.min + range*0.75, to: config.min + range*0.9 }];
+    config.redZones = [{ from: config.min + range*0.9, to: config.max }];
+    
+    gauges[name] = new Gauge("GaugeContainer", config);
+    gauges[name].render();
+  }
+  
+  $scope.createGauges = function()
+  {
+    $scope.createGauge();
+  }
+  
+  $scope.updateGauges = function()
+  {
+    for (var key in gauges)
+    {
+      var value = $scope.getRandomValue(gauges[key])
+      gauges[key].redraw(value);
+    }
+  }
+  
+  $scope.getRandomValue = function(gauge)
+  {
+    var overflow = 0; //10;
+    return gauge.config.min - overflow + (gauge.config.max - gauge.config.min + overflow*2) *  Math.random();
+  }
+
+  $scope.initialize = function()
+  {
+    $scope.createGauges();
+    setInterval($scope.updateGauges, 5000);
+  }
+}]);
 
 function MapController($scope, $http){
-
-  // $scope is a special object that makes
-  // its properties available to the view as
-  // variables. Here we set some default values:
-
-  $scope.showtooltip = false;
-  $scope.value = 'Edit me.';
-
-  // Some helper functions that will be
-  // available in the angular declarations
-
-  $scope.hideTooltip = function(){
-
-    // When a model is changed, the view will be automatically
-    // updated by by AngularJS. In this case it will hide the tooltip.
-
-    $scope.showtooltip = false;
-  }
-
-  $scope.toggleTooltip = function(e){
-    e.stopPropagation();
-    $scope.showtooltip = !$scope.showtooltip;
-  }
+  // TODO
 }
