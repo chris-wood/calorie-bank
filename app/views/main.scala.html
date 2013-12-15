@@ -109,7 +109,7 @@
 				  <div class="panel panel-default">
 				    <div class="panel-heading">
 				      <h4 class="panel-title">
-				        <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne" style="text-align:center; active: false;" ng-click="expand()">
+				        <a data-toggle="collapse" data-parent="#accordion" href="#graphWell" style="text-align:center; active: false;" ng-click="expand()">
 				        	<h4>
 				        		<span ng-class="{glyphicon: !expanded; glyphicon-arrow-down: !expanded}"></span>
 				          		{{expandMessage}}
@@ -118,7 +118,7 @@
 				        </a>
 				      </h4>
 				    </div>
-				    <div id="collapseOne" class="panel-collapse collapse in">
+				    <div id="graphWell" class="panel-collapse collapse in">
 				      <div class="panel-body">
 				      	<div id="activity-graph" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
 				      </div>
@@ -135,26 +135,37 @@
 			<!-- treat well -->
 			<div class="well">
 				<div id="main" ng-app="calorie-bank" ng-controller="TreatController">
-					<h1 style="text-align:center;">{{message}}</h1>
-					<button type="button" class="btn btn-default" ng-click="getTreats()">Default</button>
-
-					</br>
-
-					<div class="row clearfix">
-						<div class="col-md-6 column">
-							<div ng-repeat="treatGroup in treatGroupCollection" class="list-group" style="cursor:pointer;">
-								<div class="list-group-item panel-heading "><span class="pull-left badge">{{treatGroup.treats.length}}</span>
-									<h4 class="list-group-item-heading">
-										{{treatGroup.groupName}}
-									</h4>
-								</div>
-								<div class="list-group-item active" ng-repeat="treat in treatGroup.treats" ng-click="renderTreat(treat)">
-									{{treat.name}} - {{treat.calories}}
-								</div>
-							</div>
-						</div>
-						<div class="col-md-6 column text-center">
-							<img src="http://placehold.it/350x150">
+					<div class="panel-group" id="accordion">
+						<div class="panel panel-default">
+						    <div class="panel-heading">
+						      <h4 class="panel-title">
+						        <button data-toggle="collapse" data-parent="#accordion" href="#treatWell" ng-class="{btn-disabled: canExpand == 'false'}" ng-click="expand()">
+						        	<h1 style="text-align:center;">{{message}}</h1>
+									<button type="button" class="btn btn-default" ng-click="getTreats()">Default</button>
+						        </a>
+						      </h4>
+						    </div>
+						    <div id="treatWell" class="panel-collapse collapse in">
+					      		<div class="panel-body">
+					      			<div class="row clearfix">
+										<div class="col-md-6 column">
+											<div ng-repeat="treatGroup in treatGroupCollection" class="list-group" style="cursor:pointer;">
+												<div class="list-group-item panel-heading "><span class="pull-left badge">{{treatGroup.treats.length}}</span>
+													<h4 class="list-group-item-heading">
+														{{treatGroup.groupName}}
+													</h4>
+												</div>
+												<div class="list-group-item" ng-repeat="treat in treatGroup.treats" ng-click="renderTreat(treat)">
+													{{treat.name}} - {{treat.calories}}
+												</div>
+											</div>
+										</div>
+										<div class="col-md-6 column text-center">
+											<img src="http://placehold.it/350x150">
+										</div>
+									</div>
+					      		</div>
+					     	</div>
 						</div>
 					</div>
 				</div>
@@ -166,11 +177,33 @@
 			<!-- location well -->
 			<div class="well">
 				<div id="main" ng-app ng-controller="MapController">
-					<h1 style="text-align:center;">Get it from here!</h1>					
+					<div class="panel-group" id="accordion">
+						<div class="panel panel-default">
+							<div class="panel-heading">
+						      <h4 class="panel-title">
+						        <a data-toggle="collapse" data-parent="#accordion" href="#locationWell" style="text-align:center; active: false;" ng-click="expand()">
+						        	<div class="page-header">
+										<h1>Get it from here <small>(or order online)</small></h1>
+									</div>
+						        </a>
+						      </h4>
+						    </div>
+						    <div id="locationWell" class="panel-collapse collapse in">
+					      		<div class="panel-body">
 
-					<!-- map goes here -->
-					<img src="http://placehold.it/350x150">
-					
+					      			<div class="row clearfix">
+										<div class="col-md-6 column">
+											TODO: list of places here
+										</div>
+										<div class="col-md-6 column text-center">
+											<!-- map goes here -->
+											<img src="http://placehold.it/350x150"> 
+										</div>
+									</div>
+					      		</div>
+					     	</div>
+						</div>
+					</div>
 				</div>
 			</div>
 
@@ -178,7 +211,6 @@
 			<footer style="text-align:center;">
 				<p>&copy; Calorie Bank by <a target="_blank" href="http://www.christopher-wood.com">Christopher Wood</a></p>
 			</footer>
-
 		</div>
 	</div>
 </div>

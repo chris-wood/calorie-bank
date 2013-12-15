@@ -104,6 +104,7 @@ app.controller('TreatController', ['$scope', '$calorie', '$log', function ($scop
   // Default objects in scope for this controller
   $scope.treatGroupCollection = new Array(); // this is an array of arrays
   $scope.message = "YOU GET NOTHING!";
+  $scope.canExpand = false;
 
   /////// BEGIN TEST DATA
   $scope.treatGroupCollection = new Array();
