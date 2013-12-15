@@ -111,7 +111,7 @@
 				      <h4 class="panel-title">
 				        <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne" style="text-align:center; active: false;" ng-click="expand()">
 				        	<h4>
-				        		<span class="glyphicon glyphicon-arrow-down"></span>
+				        		<span ng-class="{glyphicon: !expanded; glyphicon-arrow-down: !expanded}"></span>
 				          		{{expandMessage}}
 				          		<span class="glyphicon glyphicon-arrow-down"></span>
 				          	</h4>
@@ -165,13 +165,12 @@
 
 			<!-- location well -->
 			<div class="well">
-				<h1 style="text-align:center;">Get it from here!</h1>
-				<div id="main" ng-app ng-controller="MapController" ng-click="hideTooltip()">
-					<div class="tooltip" ng-click="$event.stopPropagation()" ng-show="showtooltip">
+				<div id="main" ng-app ng-controller="MapController">
+					<h1 style="text-align:center;">Get it from here!</h1>					
 
-						<!-- map goes here -->
-						<img src="http://placehold.it/350x150">
-					</div>
+					<!-- map goes here -->
+					<img src="http://placehold.it/350x150">
+					
 				</div>
 			</div>
 

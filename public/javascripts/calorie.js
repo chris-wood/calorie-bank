@@ -292,9 +292,13 @@ app.controller('CalorieBankController', ['$scope', '$calorie', '$log', function 
   }
 }]);
 
-function MapController($scope, $http){
-  // TODO
-}
+// function MapController($scope, $http){
+//   // TODO
+// }
+
+app.controller('MapController', ['$scope', '$calorie', '$log', function ($scope, $calorie, $log) {
+
+}]);
 
 // Main jQuery shenanigans - on page load
 $("#accordion").accordion({
