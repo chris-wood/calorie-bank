@@ -6,7 +6,7 @@ import play.api.mvc._
 
 object Application extends Controller { //with securesocial.core.SecureSocial {
 
-	def index = Action { Ok(views.html.index("FUCK YOU PLAY", "username-here")) } // default view takes no parameters...
+	def index = Action { Ok(views.html.index("CalorieBank", "username-here")) } // default view takes no parameters...
 
   // def index = SecuredAction { implicit request =>
     // Ok(views.html.index(request.user))

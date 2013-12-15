@@ -144,6 +144,16 @@ function GraphController($scope){
 
 app.controller('CalorieBankController', ['$scope', '$calorie', '$log', function ($scope, $calorie, $log) {
   var gauges = [];
+
+  $scope.expandMessage = "Hide Me";
+  $scope.expanded = true;
+
+  $scope.expand = function()
+  {
+    $scope.expanded = !$scope.expanded;
+    if ($scope.expanded) $scope.expandMessage = "Hide Me";
+    else $scope.expandMessage = "Show Me More";
+  }
   
   $scope.createGauge = function()
   {
@@ -193,9 +203,104 @@ app.controller('CalorieBankController', ['$scope', '$calorie', '$log', function 
   {
     $scope.createGauges();
     setInterval($scope.updateGauges, 5000);
+
+
+
+    /// INITIALIZE THE CHARTS
+    $('#calorie-graph').highcharts({
+            title: {
+                text: 'Calorie Expendature',
+                x: -20 //center
+            },
+            xAxis: {
+                categories: 
+                [
+                'Sun', 
+                'Mon', 
+                'Tue', 
+                'Wed', 
+                'Thu', 
+                'Fri', 
+                'Sat'
+                ]
+            },
+            yAxis: {
+                title: {
+                    text: 'Calories Burned'
+                },
+                plotLines: [{
+                    value: 0,
+                    width: 1,
+                    color: '#808080'
+                }]
+            },
+            // legend: {
+            //     layout: 'vertical',
+            //     align: 'right',
+            //     verticalAlign: 'middle',
+            //     borderWidth: 0
+            // },
+
+            // There will be 1 series
+            series: [{
+                showInLegend: false, 
+                name: 'Calories',
+                data: [7.0, 6.9, 9.5, 14.5, 18.2, 21.5, 25.2]
+            }]
+        });
+
+      $('#activity-graph').highcharts({
+            title: {
+                text: 'Activity Breakdown',
+                x: -20 //center
+            },
+            xAxis: {
+                categories: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
+            },
+            yAxis: {
+                title: {
+                    text: 'Calories Burned'
+                },
+                plotLines: [{
+                    value: 0,
+                    width: 1,
+                    color: '#808080'
+                }]
+            },
+            legend: {
+                layout: 'vertical',
+                align: 'right',
+                verticalAlign: 'middle',
+                borderWidth: 0
+            },
+
+            // There will be 1 series
+            series: 
+            [
+              {
+                showInLegend: true,
+                name: 'Exercise',
+                data: [7.0, 6.9, 9.5, 14.5, 18.2, 21.5, 25.2]
+              },
+              {
+                showInLegend: true,
+                name: 'Active Minutes',
+                data: [1.0,1.0,1.0,1.0,1.0,1.0,1.0]
+              }
+            ]
+        });
   }
 }]);
 
 function MapController($scope, $http){
   // TODO
 }
+
+// Main jQuery shenanigans - on page load
+$("#accordion").accordion({
+   active: false,            
+   autoHeight: false,            
+   navigation: true,            
+   collapsible: true,
+   create: function(event, ui) { $("#accordion").show(); }
+});
