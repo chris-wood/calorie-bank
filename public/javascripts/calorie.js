@@ -140,10 +140,45 @@ app.controller('TreatController', ['$scope', '$calorie', '$log', function ($scop
 }]);
 
 app.controller('CalorieBankController', ['$scope', '$calorie', '$log', function ($scope, $calorie, $log) {
+  // Container for the gauges
   var gauges = [];
 
+  // Parameters to fetch from the server?
   $scope.expandMessage = "Hide Me";
   $scope.expanded = true;
+  $scope.currentCount = 1700;
+  $scope.config = 
+  {
+    size: 400,
+    label: "Calories",
+    min: 0,
+    max: 2400,
+    target: 1800,
+    minorTicks: 5,
+    currentValue: $scope.currentCount
+  };
+
+  // Helper functions for the front-end to control what's displayed
+  $scope.isCountUnder = function()
+  {
+    var per = $scope.config.max * 0.1;
+    // console.log(($scope.currentCount < ($scope.config.target - per)));
+    return ($scope.currentCount < ($scope.config.target - per));
+  }
+
+  $scope.isCountEven = function()
+  {
+    var per = $scope.config.max * 0.1;
+    return ($scope.currentCount >= ($scope.config.target - per)) &&
+     ($scope.currentCount <= ($scope.config.target + per));
+  }
+
+  $scope.isCountOver = function()
+  {
+    var per = $scope.config.max * 0.1;
+    return ($scope.currentCount > ($scope.config.target + per)) ||
+     ($scope.currentCount < ($scope.config.max - per)); 
+  }
 
   $scope.expand = function()
   {
@@ -157,24 +192,14 @@ app.controller('CalorieBankController', ['$scope', '$calorie', '$log', function 
 
     // TODO: pull configuration down from the backend through HTTP call
     // is a calorie configuration object warranted? backend can just build object when queried...
-
-    var config = 
-    {
-      size: 400,
-      label: "Calories",
-      min: 0,
-      max: 2400,
-      target: 1800,
-      minorTicks: 5
-    }
     
-    var range = config.max - config.min;
-    config.greenZones = [{ from: config.min + range*0.4, to: config.min + range*0.6 }];
+    var range = $scope.config.max - $scope.config.min;
+    $scope.config.greenZones = [{ from: $scope.config.target - range*0.1, to: $scope.config.target + range*0.1 }];
     // config.yellowZones = [{ from: config.min, to: config.min + range*0.4 }];
-    config.orangeZones = [{ from: config.min + range*0.6, to: config.min + range*0.85 }];
-    config.redZones = [{ from: config.min + range*0.85, to: config.max }];
+    $scope.config.orangeZones = [{ from: $scope.config.target - range*0.25, to: $scope.config.target - range*0.1 }];
+    $scope.config.redZones = [{ from: $scope.config.min + range*0.85, to: $scope.config.max }];
     
-    gauges[name] = new Gauge("GaugeContainer", config);
+    gauges[name] = new Gauge("GaugeContainer", $scope.config);
     gauges[name].render();
   }
   
@@ -201,7 +226,7 @@ app.controller('CalorieBankController', ['$scope', '$calorie', '$log', function 
   $scope.initialize = function()
   {
     $scope.createGauges();
-    setInterval($scope.updateGauges, 5000);
+    // setInterval($scope.updateGauges, 5000);
 
 
 

@@ -45,49 +45,67 @@ function Gauge(placeholderName, configuration)
 		// 			.style("stroke", "#000")
 		// 			.style("stroke-width", "0.5px");
 
-		this.body.append("svg:arc")
-			.attr("cx", this.config.cx)
-			.attr("cy", this.config.cy)
-	    	.attr("innerRadius", this.config.radius)
-	    	.attr("outerRadius", this.config.radius)
-	    	.attr("startAngle", 45 * (Math.PI/180)) //converting from degs to radians
-	    	.attr("endAngle", 3); //just radians
+		// this.body.append("svg:arc")
+		// 	.attr("cx", this.config.cx)
+		// 	.attr("cy", this.config.cy)
+	 //    	.attr("innerRadius", this.config.radius)
+	 //    	.attr("outerRadius", this.config.radius)
+	 //    	.attr("startAngle", 45 * (Math.PI/180)) //converting from degs to radians
+	 //    	.attr("endAngle", (45 * 7) * (Math.PI/180)); //just radians
+
+	 	var arcLeft = d3.svg.arc()
+			.innerRadius(this.config.radius - 35)
+			.outerRadius(this.config.radius - 20)
+			.startAngle(45 * 5 * (Math.PI/180)) 
+			.endAngle(360 * (Math.PI/180)); 
+
+		var arcRight = d3.svg.arc()
+			.innerRadius(this.config.radius - 35)
+			.outerRadius(this.config.radius - 20)
+			.startAngle(0 * (Math.PI/180)) 
+			.endAngle((45 * 3) * (Math.PI/180)); 
+    
+		this.body.append("path")
+    		.attr("d", arcLeft)
+    		.attr("transform", "translate(" + (this.config.cx) + "," + (this.config.cy) + ")");
+    	this.body.append("path")
+    		.attr("d", arcRight)
+    		.attr("transform", "translate(" + (this.config.cx) + "," + (this.config.cy) + ")");
 					
-		this.body.append("svg:circle")
-					.attr("cx", this.config.cx)
-					.attr("cy", this.config.cy)
-					.attr("r", 0.9 * this.config.radius)
-					.style("fill", "#fff")
-					.style("stroke", "#e0e0e0")
-					.style("stroke-width", "2px");
+		// this.body.append("svg:circle")
+		// 			.attr("cx", this.config.cx)
+		// 			.attr("cy", this.config.cy)
+		// 			.attr("r", 0.9 * this.config.radius)
+		// 			.style("fill", "#fff")
+		// 			.style("stroke", "#e0e0e0")
+		// 			.style("stroke-width", "2px");
 					
+		// Draw the "danger zones"
 		for (var index in this.config.greenZones)
 		{
-			this.drawBand(this.config.greenZones[index].from, this.config.greenZones[index].to, self.config.greenColor);
+			this.drawCenteredArc(this.config.greenZones[index].from, this.config.greenZones[index].to, self.config.greenColor);
 		}
-		
 		for (var index in this.config.yellowZones)
 		{
-			this.drawBand(this.config.yellowZones[index].from, this.config.yellowZones[index].to, self.config.yellowColor);
+			this.drawCenteredArc(this.config.yellowZones[index].from, this.config.yellowZones[index].to, self.config.yellowColor);
 		}
-		
 		for (var index in this.config.redZones)
 		{
-			this.drawBand(this.config.redZones[index].from, this.config.redZones[index].to, self.config.redColor);
+			this.drawCenteredArc(this.config.redZones[index].from, this.config.redZones[index].to, self.config.redColor);
 		}
-
 		for (var index in this.config.orangeZones)
 		{
-			this.drawBand(this.config.orangeZones[index].from, this.config.orangeZones[index].to, self.config.orangeColor);
+			this.drawCenteredArc(this.config.orangeZones[index].from, this.config.orangeZones[index].to, self.config.orangeColor);
 		}
-		
+
+		// Draw the main label
 		if (undefined != this.config.label)
 		{
-			var fontSize = Math.round(this.config.size / 9);
+			var fontSize = Math.round(this.config.size / 9) / 1.5;
 			this.body.append("svg:text")
 						.attr("x", this.config.cx)
 						.attr("y", this.config.cy / 2 + fontSize / 2)
-						.attr("dy", fontSize / 2)
+						.attr("dy", fontSize / 4)
 						.attr("text-anchor", "middle")
 						.text(this.config.label)
 						.style("font-size", fontSize + "px")
@@ -95,7 +113,7 @@ function Gauge(placeholderName, configuration)
 						.style("stroke-width", "0px");
 		}
 		
-		var fontSize = Math.round(this.config.size / 16);
+		var fontSize = Math.round(this.config.size / 9) / 2;
 		var majorDelta = this.config.range / (this.config.majorTicks - 1);
 		for (var major = this.config.min; major <= this.config.max; major += majorDelta)
 		{
@@ -164,25 +182,46 @@ function Gauge(placeholderName, configuration)
 		pointerContainer.append("svg:circle")
 							.attr("cx", this.config.cx)
 							.attr("cy", this.config.cy)
-							.attr("r", 0.12 * this.config.radius)
+							.attr("r", 0.06 * this.config.radius)
 							.style("fill", "#4684EE")
 							.style("stroke", "#666")
 							.style("opacity", 1);
 		
+		// Draw the actual calorie count
+		// this.body.append("svg:path")
+		// 			.style("fill", "white")
+		// 			.attr("d", d3.svg.rectangle()
+		// 				.x(this.config.cx)
+		// 				.y(this.config.size - this.config.cy / 4)
+		// 				.width(50)
+		// 				.height(50)
+		// 				// .startAngle(this.valueToRadians(start))
+		// 				// .endAngle(this.valueToRadians(end))
+		// 				// .innerRadius(0.75 * this.config.radius)
+		// 				// .outerRadius(0.85 * this.config.radius)
+		// 				)
+		// 			.attr("transform", function() { return "translate(" + self.config.cx + ", " + self.config.cy + ") rotate(270)" });
+		this.body.append("svg:rect")
+        	.attr("x",this.config.cx - (this.config.radius / 2))
+        	.attr("y",this.config.size - this.config.cy / 4 - 20)
+        	.attr("width", this.config.radius)
+        	.attr("height", 50)
+        	.style("fill", "rgba(0,0,255,0.15)");
+
 		var fontSize = Math.round(this.config.size / 10);
 		pointerContainer.selectAll("text")
 							.data([midValue])
 							.enter()
 								.append("svg:text")
 									.attr("x", this.config.cx)
-									.attr("y", this.config.size - this.config.cy / 4 - fontSize)
+									.attr("y", this.config.size - this.config.cy / 4 )//- fontSize)
 									.attr("dy", fontSize / 2)
 									.attr("text-anchor", "middle")
 									.style("font-size", fontSize + "px")
 									.style("fill", "#000")
 									.style("stroke-width", "0px");
 		
-		this.redraw(this.config.min, 0);
+		this.redraw(this.config.currentValue, 0);
 	}
 	
 	this.buildPointerPath = function(value)
@@ -209,18 +248,18 @@ function Gauge(placeholderName, configuration)
 		}
 	}
 	
-	this.drawBand = function(start, end, color)
+	this.drawCenteredArc = function(start, end, color)
 	{
 		if (0 >= end - start) return;
 		
 		this.body.append("svg:path")
-					.style("fill", color)
-					.attr("d", d3.svg.arc()
-						.startAngle(this.valueToRadians(start))
-						.endAngle(this.valueToRadians(end))
-						.innerRadius(0.65 * this.config.radius)
-						.outerRadius(0.85 * this.config.radius))
-					.attr("transform", function() { return "translate(" + self.config.cx + ", " + self.config.cy + ") rotate(270)" });
+			.style("fill", color)
+			.attr("d", d3.svg.arc()
+				.startAngle(this.valueToRadians(start))
+				.endAngle(this.valueToRadians(end))
+				.innerRadius(0.75 * this.config.radius)
+				.outerRadius(0.85 * this.config.radius))
+			.attr("transform", function() { return "translate(" + self.config.cx + ", " + self.config.cy + ") rotate(270)" });
 	}
 	
 	this.redraw = function(value, transitionDuration)

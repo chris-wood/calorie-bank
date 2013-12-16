@@ -98,6 +98,13 @@
 						<div id="main" class="text-center">
 							<span id="GaugeContainer"></span>
 						</div>
+
+						<div class="text-center">
+							<span ng-if="isCountUnder() == true" class="text-center alert alert-info">UNDER BUDGET!</span>
+							<span ng-if="isCountEven() == true" class="text-center alert alert-success">YOU'RE IN THE ZONE!</span>
+							<!-- <span ng-if="isCountOver() == true" class="text-center alert alert-warning">BE CAREFUL - THINK OF THE TREATS!</span> -->
+							<span ng-if="isCountWayOver() == true" class="text-center alert alert-danger">WAY OVER - FOR SHAME!</span>
+						</div>
 					</div>
 					<div class="col-md-6 column text-center">
 						<div id="calorie-graph" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
@@ -105,15 +112,25 @@
 					</div>
 				</div>
 
+				<br/>
+
 				<div class="panel-group" id="accordion">
 				  <div class="panel panel-default">
 				    <div class="panel-heading">
 				      <h4 class="panel-title">
 				        <a data-toggle="collapse" data-parent="#accordion" href="#graphWell" style="text-align:center; active: false;" ng-click="expand()">
 				        	<h4>
-				        		<span ng-class="{glyphicon: !expanded; glyphicon-arrow-down: !expanded}"></span>
+				        		<span ng-switch on="expanded">
+				        			<span ng-switch-when="false" class="glyphicon glyphicon-arrow-down"></span>
+				        			<span ng-switch-when="true" class="glyphicon glyphicon-arrow-up"></span>
+				        		</span>
+
 				          		{{expandMessage}}
-				          		<span class="glyphicon glyphicon-arrow-down"></span>
+
+				          		<span ng-switch on="expanded">
+				        			<span ng-switch-when="false" class="glyphicon glyphicon-arrow-down"></span>
+				        			<span ng-switch-when="true" class="glyphicon glyphicon-arrow-up"></span>
+				        		</span>
 				          	</h4>
 				        </a>
 				      </h4>
@@ -123,11 +140,6 @@
 				      	<div id="activity-graph" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
 				      </div>
 				    </div>
-<!-- 				    <div id="collapseOne" class="panel-collapse collapse in">
-				      <div class="panel-body">
-				      	<div id="activity-graph" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
-				      </div>
-				    </div> -->
 				  </div>
 				</div>
 			</div>
@@ -139,7 +151,7 @@
 						<div class="panel panel-default">
 						    <div class="panel-heading">
 						      <h4 class="panel-title">
-						        <button data-toggle="collapse" data-parent="#accordion" href="#treatWell" ng-class="{btn-disabled: canExpand == 'false'}" ng-click="expand()">
+						        <button data-toggle="collapse" data-parent="#accordion" href="#treatWell" ng-click="expand()">
 						        	<h1 style="text-align:center;">{{message}}</h1>
 									<button type="button" class="btn btn-default" ng-click="getTreats()">Default</button>
 						        </a>
