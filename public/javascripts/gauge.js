@@ -23,6 +23,7 @@ function Gauge(placeholderName, configuration)
 		
 		this.config.greenColor 	= configuration.greenColor || "#109618";
 		this.config.yellowColor = configuration.yellowColor || "#FF9900";
+		this.config.orangeColor = configuration.orangeColor || "#F87217";
 		this.config.redColor 	= configuration.redColor || "#DC3912";
 		
 		this.config.transitionDuration = configuration.transitionDuration || 500;
@@ -36,13 +37,21 @@ function Gauge(placeholderName, configuration)
 							.attr("width", this.config.size)
 							.attr("height", this.config.size);
 		
-		this.body.append("svg:circle")
-					.attr("cx", this.config.cx)
-					.attr("cy", this.config.cy)
-					.attr("r", this.config.radius)
-					.style("fill", "#ccc")
-					.style("stroke", "#000")
-					.style("stroke-width", "0.5px");
+		// this.body.append("svg:circle")
+					// .attr("cx", this.config.cx)
+					// .attr("cy", this.config.cy)
+		// 			.attr("r", this.config.radius)
+		// 			.style("fill", "#ccc")
+		// 			.style("stroke", "#000")
+		// 			.style("stroke-width", "0.5px");
+
+		this.body.append("svg:arc")
+			.attr("cx", this.config.cx)
+			.attr("cy", this.config.cy)
+	    	.attr("innerRadius", this.config.radius)
+	    	.attr("outerRadius", this.config.radius)
+	    	.attr("startAngle", 45 * (Math.PI/180)) //converting from degs to radians
+	    	.attr("endAngle", 3); //just radians
 					
 		this.body.append("svg:circle")
 					.attr("cx", this.config.cx)
@@ -65,6 +74,11 @@ function Gauge(placeholderName, configuration)
 		for (var index in this.config.redZones)
 		{
 			this.drawBand(this.config.redZones[index].from, this.config.redZones[index].to, self.config.redColor);
+		}
+
+		for (var index in this.config.orangeZones)
+		{
+			this.drawBand(this.config.orangeZones[index].from, this.config.orangeZones[index].to, self.config.orangeColor);
 		}
 		
 		if (undefined != this.config.label)

@@ -139,10 +139,6 @@ app.controller('TreatController', ['$scope', '$calorie', '$log', function ($scop
   }
 }]);
 
-function GraphController($scope){
-  // TODO
-}
-
 app.controller('CalorieBankController', ['$scope', '$calorie', '$log', function ($scope, $calorie, $log) {
   var gauges = [];
 
@@ -173,8 +169,10 @@ app.controller('CalorieBankController', ['$scope', '$calorie', '$log', function 
     }
     
     var range = config.max - config.min;
-    config.yellowZones = [{ from: config.min + range*0.75, to: config.min + range*0.9 }];
-    config.redZones = [{ from: config.min + range*0.9, to: config.max }];
+    config.greenZones = [{ from: config.min + range*0.4, to: config.min + range*0.6 }];
+    // config.yellowZones = [{ from: config.min, to: config.min + range*0.4 }];
+    config.orangeZones = [{ from: config.min + range*0.6, to: config.min + range*0.85 }];
+    config.redZones = [{ from: config.min + range*0.85, to: config.max }];
     
     gauges[name] = new Gauge("GaugeContainer", config);
     gauges[name].render();
@@ -301,11 +299,11 @@ app.controller('MapController', ['$scope', '$calorie', '$log', function ($scope,
 
 }]);
 
-// Main jQuery shenanigans - on page load
-$("#accordion").accordion({
-   active: false,            
-   autoHeight: false,            
-   navigation: true,            
-   collapsible: true,
-   create: function(event, ui) { $("#accordion").show(); }
-});
+// // Main jQuery shenanigans - on page load
+// $("#accordion").accordion({
+//    active: false,            
+//    autoHeight: false,            
+//    navigation: true,            
+//    collapsible: true,
+//    create: function(event, ui) { $("#accordion").show(); }
+// });
